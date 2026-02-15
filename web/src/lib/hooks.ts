@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /**
  * Safely load JSON from localStorage
@@ -38,13 +38,15 @@ export function useLocalStorageState<T>(
   initialValue: T
 ): [T, (value: T | ((prev: T) => T)) => void] {
   const [state, setState] = useState<T>(initialValue);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const hydrationRef = useRef(false);
 
-  // Load from localStorage after hydration
+  // Load from localStorage only once on mount
   useEffect(() => {
+    if (hydrationRef.current) return;
+    hydrationRef.current = true;
+
     const loaded = loadJSON(key, initialValue);
     setState(loaded);
-    setIsHydrated(true);
   }, [key, initialValue]);
 
   // Handle state updates

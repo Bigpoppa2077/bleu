@@ -9,17 +9,17 @@ export const mockBrief = (): GeneratedPack => ({
       title: "MVP Launch",
       etaHours: 40,
       tasks: [
-        { id: "1", title: "Design core UI", done: false, points: 5 },
-        { id: "2", title: "Build project form", done: false, points: 3 },
-        { id: "3", title: "Setup database", done: false, points: 8 },
+        { id: "1", title: "Design core UI", done: false },
+        { id: "2", title: "Build project form", done: false },
+        { id: "3", title: "Setup database", done: false },
       ],
     },
     {
-      title: "AI Integration",
+      title: "Integration",
       etaHours: 20,
       tasks: [
-        { id: "4", title: "Add OpenAI API", done: false, points: 5 },
-        { id: "5", title: "Test prompts", done: false, points: 3 },
+        { id: "4", title: "Add external API", done: false },
+        { id: "5", title: "Test drafts", done: false },
       ],
     },
   ],
@@ -54,26 +54,26 @@ export const mockPlan = (): GeneratedPack => ({
       title: "Phase 1: Foundation",
       etaHours: 60,
       tasks: [
-        { id: "1", title: "Setup dev environment", done: true, points: 3 },
-        { id: "2", title: "Database schema design", done: false, points: 5 },
-        { id: "3", title: "API scaffolding", done: false, points: 8 },
+        { id: "1", title: "Setup dev environment", done: true },
+        { id: "2", title: "Database schema design", done: false },
+        { id: "3", title: "API scaffolding", done: false },
       ],
     },
     {
       title: "Phase 2: Core Features",
       etaHours: 80,
       tasks: [
-        { id: "4", title: "Project creation", done: false, points: 13 },
-        { id: "5", title: "Milestone management", done: false, points: 13 },
-        { id: "6", title: "Risk tracking", done: false, points: 8 },
+        { id: "4", title: "Project creation", done: false },
+        { id: "5", title: "Milestone management", done: false },
+        { id: "6", title: "Risk tracking", done: false },
       ],
     },
     {
       title: "Phase 3: Polish & Deploy",
       etaHours: 40,
       tasks: [
-        { id: "7", title: "Testing & QA", done: false, points: 13 },
-        { id: "8", title: "Deploy to production", done: false, points: 5 },
+        { id: "7", title: "Testing & QA", done: false },
+        { id: "8", title: "Deploy to production", done: false },
       ],
     },
   ],
@@ -125,7 +125,7 @@ export const mockRisks = (): GeneratedPack => ({
     {
       category: "Technical",
       severity: "high",
-      issue: "AI API costs spiral out of control",
+      issue: "External API costs spiral out of control",
       mitigation:
         "Implement strict rate limiting and cost monitoring; cache responses",
     },

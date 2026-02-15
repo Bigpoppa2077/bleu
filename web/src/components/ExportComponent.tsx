@@ -74,7 +74,7 @@ export function ExportComponent({
           `${idx + 1}. ${milestone.title} (${milestone.etaHours}h estimated)`
         );
         milestone.tasks.forEach((task) => {
-          lines.push(`   ☐ ${task.title} [${task.points}pts]`);
+          lines.push(`   ☐ ${task.title}`);
         });
         lines.push("");
       });
@@ -136,7 +136,7 @@ export function ExportComponent({
     return (
       <div className="max-w-4xl p-6 text-center">
         <p className="text-gray-500 italic">
-          Generate a plan and predict problems to create a project pack
+          Create a draft plan and check potential issues to create a project pack
         </p>
       </div>
     );

@@ -4,7 +4,15 @@ export interface Task {
   id: string;
   title: string;
   done: boolean;
-  points: number;
+  ownerId?: string;
+  dueDate?: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  availability: string;
 }
 
 export interface Milestone {
@@ -31,6 +39,26 @@ export interface Gap {
   impact: string;
 }
 
+export interface ChangeRequest {
+  id: string;
+  title: string;
+  description: string;
+  appliedToPipeline: boolean;
+  createdAt: string;
+}
+
+export interface VisionAnchors {
+  pillars: {
+    luxury: number;
+    craft: number;
+    minimal: number;
+    bold: number;
+    warm: number;
+  };
+  keywords: string[];
+  nonNegotiables: string[];
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -38,6 +66,22 @@ export interface Project {
   audience: string;
   success: string;
   references: string[];
+  projectType?:
+    | "Brand/Design"
+    | "Video/Content"
+    | "Product/Physical"
+    | "Music/Audio"
+    | "Writing"
+    | "Space/Architecture"
+    | "General";
+  // optional free-form answers to tailored questions
+  notes?: Record<string, string>;
+  // team members for the project
+  team?: TeamMember[];
+  // change requests for the pipeline
+  changeRequests?: ChangeRequest[];
+  // vision anchors - pillars, keywords, non-negotiables
+  visionAnchors?: VisionAnchors;
 }
 
 export interface GeneratedPack {

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Project, Constraint, GeneratedPack, Risk, Gap } from "@/lib/types";
+import { Project, Constraint, GeneratedPack, Risk } from "@/lib/types";
 
 interface RisksTabProps {
   project: Project;
   constraints: Constraint[];
+  generatedRisks: GeneratedPack | null;
+  setGeneratedRisks: (p: GeneratedPack | null) => void;
 }
 
 const severityColors = {
@@ -14,13 +16,13 @@ const severityColors = {
   high: "bg-red-100 text-red-800 border-red-300",
 };
 
-export function RisksTab({ project, constraints }: RisksTabProps) {
+export function RisksTab({ project, constraints, generatedRisks, setGeneratedRisks }: RisksTabProps) {
   const [implementation, setImplementation] = useState("");
-  const [risks, setRisks] = useState<GeneratedPack | null>(null);
+  const [risks, setRisks] = useState<GeneratedPack | null>(generatedRisks);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handlePredictProblems = async () => {
+  const handleSuggestIssues = async () => {
     if (!implementation.trim()) {
       setError("Please describe how it will be made/published");
       return;
@@ -48,42 +50,43 @@ export function RisksTab({ project, constraints }: RisksTabProps) {
       const data = await response.json();
 
       if (!data.ok) {
-        setError(data.error || "Failed to predict problems");
+        setError(data.error || "Failed to suggest potential issues");
         return;
       }
 
       setRisks(data.data);
+      setGeneratedRisks(data.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error predicting problems");
+      setError(err instanceof Error ? err.message : "Error suggesting potential issues");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-8 p-10">
       {/* Input Section */}
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-gray-900 mb-2 uppercase tracking-wide">
+          <label className="block text-lg font-bold text-gray-900 mb-3 uppercase tracking-wide">
             How it will be made/published
           </label>
           <textarea
             value={implementation}
             onChange={(e) => setImplementation(e.target.value)}
-            placeholder="Describe your approach: e.g., 'Built with Next.js, deployed on Vercel, using OpenAI API for AI features, distributed through ProductHunt'"
+            placeholder="Describe your approach: e.g., 'Built with Next.js, deployed on Vercel, using external services for draft features, distributed through ProductHunt'"
             rows={4}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none text-sm"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-3 focus:ring-blue-600 focus:border-blue-600 resize-none text-lg"
           />
         </div>
 
         <div className="flex gap-3">
           <button
-            onClick={handlePredictProblems}
+            onClick={handleSuggestIssues}
             disabled={loading || !implementation.trim()}
-            className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+            className="px-6 py-4 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
           >
-            {loading ? "Predicting..." : "Predict Problems"}
+            {loading ? "Analyzing..." : "Potential Issues"}
           </button>
         </div>
       </div>
@@ -98,25 +101,11 @@ export function RisksTab({ project, constraints }: RisksTabProps) {
       {/* Results */}
       {risks && (
         <div className="space-y-6">
-          {/* Vision → Reality Gaps */}
-          {risks.gaps && risks.gaps.length > 0 && (
-            <section className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Vision → Reality Gaps
-              </h3>
-              <div className="space-y-3">
-                {risks.gaps.map((gap, idx) => (
-                  <GapCard key={idx} gap={gap} />
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* Risks */}
           {risks.risks && risks.risks.length > 0 && (
-            <section className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">Risks</h3>
-              <div className="space-y-3">
+            <section className="space-y-4">
+              <h3 className="text-2xl font-bold text-gray-900">Potential Issues</h3>
+              <div className="space-y-4">
                 {risks.risks.map((risk, idx) => (
                   <RiskCard key={idx} risk={risk} />
                 ))}
@@ -142,8 +131,8 @@ export function RisksTab({ project, constraints }: RisksTabProps) {
           {/* Empty State */}
           {(!risks.gaps || risks.gaps.length === 0) &&
             (!risks.risks || risks.risks.length === 0) && (
-              <p className="text-sm text-gray-500 italic text-center py-6">
-                No risks identified. You might be onto something!
+              <p className="text-lg text-gray-600 italic text-center py-8">
+                No issues detected yet—add constraints or delivery method to refine.
               </p>
             )}
         </div>
@@ -152,33 +141,7 @@ export function RisksTab({ project, constraints }: RisksTabProps) {
   );
 }
 
-interface GapCardProps {
-  gap: Gap;
-}
-
-function GapCard({ gap }: GapCardProps) {
-  return (
-    <div className="border border-gray-200 rounded-lg p-4 bg-white space-y-2">
-      <div className="flex items-start gap-3">
-        <div className="text-xl flex-shrink-0">⚠️</div>
-        <div className="flex-1 space-y-1">
-          <p className="text-sm">
-            <span className="font-medium text-gray-900">Want:</span>{" "}
-            <span className="text-gray-700">{gap.want}</span>
-          </p>
-          <p className="text-sm">
-            <span className="font-medium text-gray-900">Reality:</span>{" "}
-            <span className="text-gray-700">{gap.reality}</span>
-          </p>
-          <p className="text-sm mt-2">
-            <span className="font-medium text-gray-900">Impact:</span>{" "}
-            <span className="text-gray-700">{gap.impact}</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Gaps intentionally removed from UI
 
 interface RiskCardProps {
   risk: Risk;
@@ -201,9 +164,16 @@ function RiskCard({ risk }: RiskCardProps) {
         </span>
       </div>
 
-      <div className="space-y-1">
-        <p className="text-xs font-medium text-gray-900">Mitigation:</p>
-        <p className="text-sm text-gray-600">{risk.mitigation}</p>
+      <div className="space-y-2">
+        <div>
+          <p className="text-xs font-medium text-gray-900">Why it matters</p>
+          <p className="text-sm text-gray-600">{`${risk.issue}. This is a ${risk.severity} ${risk.category.toLowerCase()} risk that can impact delivery or outcomes.`}</p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-gray-900">What to do next</p>
+          <p className="text-sm text-gray-600">{risk.mitigation || "Define specific mitigations and next steps."}</p>
+        </div>
       </div>
     </div>
   );

@@ -6,9 +6,10 @@ import { Constraint } from "@/lib/types";
 interface ConstraintsTabProps {
   constraints: Constraint[];
   setConstraints: (constraints: Constraint[]) => void;
+  suggestedTypes?: string[];
 }
 
-const SUGGESTED_TYPES = [
+const DEFAULT_SUGGESTED_TYPES = [
   "Budget",
   "Timeline",
   "Tools",
@@ -17,7 +18,7 @@ const SUGGESTED_TYPES = [
   "Brand rules",
 ];
 
-export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabProps) {
+export function ConstraintsTab({ constraints, setConstraints, suggestedTypes }: ConstraintsTabProps) {
   const [type, setType] = useState("");
   const [value, setValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -52,15 +53,15 @@ export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabPr
   };
 
   return (
-    <div className="space-y-6 p-8">
+    <div className="space-y-8 p-10">
       {/* Add Constraint Form */}
       <div className="space-y-4">
-        <h3 className="text-sm font-semibold text-gray-900">Add Constraint</h3>
+        <h3 className="text-lg font-bold text-gray-900">Add Constraint</h3>
 
         <div className="flex gap-3">
           {/* Type Input */}
           <div className="flex-1 relative">
-            <label className="block text-xs font-semibold text-gray-900 mb-2 uppercase tracking-wide">
+            <label className="block text-lg font-bold text-gray-900 mb-3 uppercase tracking-wide">
               Type
             </label>
             <input
@@ -73,30 +74,30 @@ export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabPr
               onFocus={() => setShowSuggestions(true)}
               placeholder="e.g., Budget"
               onKeyPress={handleKeyPress}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-3 focus:ring-blue-600 focus:border-blue-600 text-lg"
             />
 
             {/* Suggestions Dropdown */}
             {showSuggestions && type && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                {SUGGESTED_TYPES.filter((t) =>
-                  t.toLowerCase().includes(type.toLowerCase())
-                ).map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    onClick={() => handleTypeSelect(suggestion)}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+                {(suggestedTypes || DEFAULT_SUGGESTED_TYPES)
+                  .filter((t) => t.toLowerCase().includes(type.toLowerCase()))
+                  .map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => handleTypeSelect(suggestion)}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
               </div>
             )}
           </div>
 
           {/* Value Input */}
           <div className="flex-1">
-            <label className="block text-xs font-semibold text-gray-900 mb-2 uppercase tracking-wide">
+            <label className="block text-lg font-bold text-gray-900 mb-3 uppercase tracking-wide">
               Value
             </label>
             <input
@@ -105,7 +106,7 @@ export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabPr
               onChange={(e) => setValue(e.target.value)}
               placeholder="e.g., $10,000"
               onKeyPress={handleKeyPress}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-3 focus:ring-blue-600 focus:border-blue-600 text-lg"
             />
           </div>
 
@@ -114,7 +115,7 @@ export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabPr
             <button
               onClick={handleAdd}
               disabled={!type.trim() || !value.trim()}
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-4 bg-blue-600 text-white text-lg font-bold rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Add
             </button>
@@ -124,12 +125,12 @@ export function ConstraintsTab({ constraints, setConstraints }: ConstraintsTabPr
 
       {/* Constraints List */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-gray-900">
+        <h3 className="text-lg font-bold text-gray-900">
           Constraints ({constraints.length})
         </h3>
 
         {constraints.length === 0 ? (
-          <p className="text-sm text-gray-500 italic">
+          <p className="text-lg text-gray-600 italic">
             No constraints yet. Add one to get started.
           </p>
         ) : (
